@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hohenthaner</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      background-attachment: fixed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      color: white;
+    }
+
+    /* Animated background blobs */
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.35;
+      pointer-events: none;
+      animation: float 8s ease-in-out infinite;
+    }
+    body::before {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, #7c3aed, transparent);
+      top: -100px; left: -100px;
+    }
+    body::after {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, #2563eb, transparent);
+      bottom: -80px; right: -80px;
+      animation-delay: -4s;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-30px) scale(1.05); }
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Password Gate */
+    #gate {
+      background: rgba(255,255,255,0.07);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 24px;
+      padding: 3rem 2.5rem;
+      text-align: center;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+    }
+
+    #gate .logo {
+      font-size: 2.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    #gate h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.4rem;
+    }
+
+    #gate p {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 2rem;
+    }
+
+    #gate input {
+      width: 100%;
+      padding: 0.9rem 1.2rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.08);
+      color: white;
+      font-size: 1.1rem;
+      text-align: center;
+      letter-spacing: 0.15em;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      margin-bottom: 1rem;
+    }
+    #gate input::placeholder { color: rgba(255,255,255,0.3); letter-spacing: 0; }
+    #gate input:focus { border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.12); }
+    #gate input.error { border-color: #f87171; background: rgba(248,113,113,0.1); }
+
+    #gate .error-msg {
+      color: #f87171;
+      font-size: 0.85rem;
+      margin-top: -0.5rem;
+      margin-bottom: 0.8rem;
+      min-height: 1.2em;
+    }
+
+    #gate button {
+      width: 100%;
+      padding: 0.9rem;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #7c3aed, #2563eb);
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    #gate button:hover { opacity: 0.9; }
+    #gate button:active { transform: scale(0.98); }
+
+    /* App Dashboard */
+    #dashboard { display: none; }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .header .logo { font-size: 2.4rem; margin-bottom: 0.4rem; }
+    .header h1 { font-size: 1.8rem; font-weight: 700; letter-spacing: -0.02em; }
+    .header p { color: rgba(255,255,255,0.5); font-size: 0.9rem; margin-top: 0.3rem; }
+
+    .apps-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .app-card {
+      background: rgba(255,255,255,0.07);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      text-decoration: none;
+      color: white;
+      transition: background 0.2s, transform 0.15s, border-color 0.2s;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      cursor: pointer;
+    }
+    .app-card:hover {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.25);
+      transform: translateY(-2px);
+    }
+    .app-card:active { transform: translateY(0); }
+
+    .app-icon {
+      width: 56px; height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+
+    .app-info { flex: 1; min-width: 0; }
+    .app-info h2 { font-size: 1rem; font-weight: 600; margin-bottom: 0.2rem; }
+    .app-info p { font-size: 0.8rem; color: rgba(255,255,255,0.5); }
+
+    .app-arrow {
+      color: rgba(255,255,255,0.3);
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .logout-btn {
+      margin-top: 2rem;
+      width: 100%;
+      padding: 0.7rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: transparent;
+      color: rgba(255,255,255,0.4);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .logout-btn:hover { color: rgba(255,255,255,0.7); border-color: rgba(255,255,255,0.2); }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Password Gate -->
+    <div id="gate">
+      <div class="logo">🏠</div>
+      <h1>Hohenthaner</h1>
+      <p>Bitte Passwort eingeben</p>
+      <input type="password" id="pw-input" placeholder="Passwort" autocomplete="current-password" />
+      <div class="error-msg" id="error-msg"></div>
+      <button onclick="unlock()">Weiter</button>
+    </div>
+
+    <!-- App Dashboard -->
+    <div id="dashboard">
+      <div class="header">
+        <div class="logo">🏠</div>
+        <h1>Hohenthaner</h1>
+        <p>Wähle eine App</p>
+      </div>
+
+      <div class="apps-grid" id="apps-grid">
+        <!-- Apps werden hier per JS gerendert -->
+      </div>
+
+      <button class="logout-btn" onclick="logout()">Abmelden</button>
+    </div>
+
+  </div>
+
+  <script>
+    const PASSWORD = '$APP_PASSWORD'
+    const STORAGE_KEY = 'hh_auth'
+
+    const apps = [
+      {
+        name: 'FamilyShare',
+        description: 'Gemeinsame Ausgaben tracken',
+        emoji: '💸',
+        color: 'linear-gradient(135deg, #2563eb, #7c3aed)',
+        url: '$EXPENSES_URL',
+      },
+      // Weitere Apps hier hinzufügen:
+      // {
+      //   name: 'Nächste App',
+      //   description: 'Beschreibung',
+      //   emoji: '📋',
+      //   color: 'linear-gradient(135deg, #059669, #0891b2)',
+      //   url: 'https://...',
+      // },
+    ]
+
+    function renderApps() {
+      const grid = document.getElementById('apps-grid')
+      grid.innerHTML = apps.map(app => `
+        <a class="app-card" href="${app.url}" target="_blank">
+          <div class="app-icon" style="background: ${app.color}">${app.emoji}</div>
+          <div class="app-info">
+            <h2>${app.name}</h2>
+            <p>${app.description}</p>
+          </div>
+          <div class="app-arrow">›</div>
+        </a>
+      `).join('')
+    }
+
+    function unlock() {
+      const input = document.getElementById('pw-input')
+      const errorMsg = document.getElementById('error-msg')
+
+      if (input.value === PASSWORD) {
+        sessionStorage.setItem(STORAGE_KEY, '1')
+        showDashboard()
+      } else {
+        input.classList.add('error')
+        errorMsg.textContent = 'Falsches Passwort'
+        input.value = ''
+        setTimeout(() => {
+          input.classList.remove('error')
+          errorMsg.textContent = ''
+        }, 2000)
+      }
+    }
+
+    function showDashboard() {
+      document.getElementById('gate').style.display = 'none'
+      document.getElementById('dashboard').style.display = 'block'
+      renderApps()
+    }
+
+    function logout() {
+      sessionStorage.removeItem(STORAGE_KEY)
+      document.getElementById('gate').style.display = 'block'
+      document.getElementById('dashboard').style.display = 'none'
+      document.getElementById('pw-input').value = ''
+    }
+
+    // Enter-Taste
+    document.getElementById('pw-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') unlock()
+    })
+
+    // Auto-login wenn Session aktiv
+    if (sessionStorage.getItem(STORAGE_KEY) === '1') showDashboard()
+  </script>
+</body>
+</html>

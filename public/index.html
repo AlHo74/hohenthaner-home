@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hohenthaner</title>
+  <title>Home</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -203,7 +203,6 @@
     <!-- Password Gate -->
     <div id="gate">
       <div class="logo">🏠</div>
-      <h1>Hohenthaner</h1>
       <p>Bitte Passwort eingeben</p>
       <input type="password" id="pw-input" placeholder="Passwort" autocomplete="current-password" />
       <div class="error-msg" id="error-msg"></div>
@@ -214,7 +213,6 @@
     <div id="dashboard">
       <div class="header">
         <div class="logo">🏠</div>
-        <h1>Hohenthaner</h1>
         <p>Wähle eine App</p>
       </div>
 
@@ -239,14 +237,13 @@
         color: 'linear-gradient(135deg, #2563eb, #7c3aed)',
         url: '$EXPENSES_URL',
       },
-      // Weitere Apps hier hinzufügen:
-      // {
-      //   name: 'Nächste App',
-      //   description: 'Beschreibung',
-      //   emoji: '📋',
-      //   color: 'linear-gradient(135deg, #059669, #0891b2)',
-      //   url: 'https://...',
-      // },
+      {
+        name: 'Budget',
+        description: 'Familienbudget planen',
+        emoji: '📊',
+        color: 'linear-gradient(135deg, #059669, #0891b2)',
+        url: '$BUDGET_URL',
+      },
     ]
 
     function renderApps() {
